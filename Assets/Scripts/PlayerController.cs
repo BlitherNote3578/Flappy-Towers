@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public float topBound { get; private set; } = 6;
     public float bottomBound { get; private set; } = -4;
     public static PlayerController Instance;
+    public bool gameOver;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,7 +20,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && gameOver == false)
         {
             playerRb.AddForce(Vector3.up * force, ForceMode.VelocityChange);
         }
@@ -28,15 +29,32 @@ public class PlayerController : MonoBehaviour
 
     void KeepPlayerInBound()
     {
-        if (transform.position.y > topBound)
+        if ( gameOver == false )
         {
-            transform.position = new Vector3(transform.position.x, topBound, transform.position.z);
-            playerRb.AddForce(Vector3.up * -5, ForceMode.Impulse);
+            if (transform.position.y > topBound)
+            {
+                transform.position = new Vector3(transform.position.x, topBound, transform.position.z);
+                playerRb.AddForce(Vector3.up * -5, ForceMode.Impulse);
+            }
+            if (transform.position.y < bottomBound)
+            {
+                transform.position = new Vector3(transform.position.x, bottomBound, transform.position.z);
+                playerRb.AddForce(Vector3.up * 5, ForceMode.Impulse);
+            }
         }
-        if (transform.position.y < bottomBound)
+    }
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
         {
-            transform.position = new Vector3(transform.position.x, bottomBound, transform.position.z);
-            playerRb.AddForce(Vector3.up * 5, ForceMode.Impulse);
+            gameOver = true;
+        }
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Sensor"))
+        {
+            GameManager.instance.points ++;
         }
     }
 }
