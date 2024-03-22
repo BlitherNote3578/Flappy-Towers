@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class DataSaver : MonoBehaviour
 {
+    public static DataSaver instance;
     public bool nameTooLong;
-    public string m_playerName;
+    [SerializeField] string m_playerName;
     public string playerName
     {
         get { return m_playerName; }
@@ -22,22 +23,38 @@ public class DataSaver : MonoBehaviour
             }
         }
     }
-    public static DataSaver instance;
+    [SerializeField] int m_skin;
+    public int skin
+    {
+        get { return m_skin; }
+        set
+        {
+            if (value < 0)
+            {
+                Debug.LogError("No negative skin existing!");
+            }
+            else
+            {
+                m_skin = value;
+            }
+        }
+    }
     // Start is called before the first frame update
     void Awake()
     {
-        if (instance != null)
+        DontDestroyOnLoad(gameObject);
+        if (instance != null && m_playerName == null)
         {
             Destroy(gameObject);
         }
-        DontDestroyOnLoad(gameObject);
         instance = this;
     }
 
     // Update is called once per frame
     void Update()
     {
-       
+        playerName = MenuManager.instance.playerName;
+        skin = MenuManager.instance.skin;
     }
    
 }

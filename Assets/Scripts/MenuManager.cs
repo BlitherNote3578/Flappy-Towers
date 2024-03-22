@@ -4,16 +4,23 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEditor;
+
 
 public class MenuManager : MonoBehaviour
 {
     public TextMeshProUGUI errorMessages;
-    public TextMeshProUGUI name;
+    public TextMeshProUGUI nameField;
+    public static MenuManager instance;
+    public string playerName = "Player";
+    public int skin;
+    public TextMeshProUGUI skinText;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        instance = this;
+        ReadStringInput("Player");
     }
 
     // Update is called once per frame
@@ -25,12 +32,16 @@ public class MenuManager : MonoBehaviour
         }else
         {
             errorMessages.text = " ";
+            WriteOutName();
         }
-        WriteOutName();
     }
     void WriteOutName()
     {
-        name.text = DataSaver.instance.playerName;
+        if ( DataSaver.instance.nameTooLong == false)
+        {
+            nameField.text = DataSaver.instance.playerName;
+        }
+        
     }
     public void StartGame()
     {
@@ -38,6 +49,24 @@ public class MenuManager : MonoBehaviour
     }
     public void ReadStringInput(string name)
     {
-        DataSaver.instance.playerName = name;
+        playerName = name;
+    }
+    public void ExitGame()
+    {
+        EditorApplication.ExitPlaymode();
+        Application.Quit();
+    }
+    public void ChangeSkin()
+    {
+        if (skin == 0)
+        {
+            skin++;
+            skinText.text = ("Plane skin selected");
+        }
+        else
+        {
+            skin--;
+            skinText.text = ("Default skin selected");
+        }
     }
 }

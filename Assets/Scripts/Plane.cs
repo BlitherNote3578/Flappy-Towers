@@ -2,19 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class Plane : PlayerController
 {
-    protected Rigidbody playerRb;
-    protected float force = 7;
-    public float topBound { get; private set; } = 6;
-    public float bottomBound { get; private set; } = -4;
-    public static PlayerController Instance;
-    public bool gameOver;
+    public static Plane instance;
+    private Rigidbody playerRbP;
     // Start is called before the first frame update
     void Start()
     {
-        Instance = this;
-        playerRb = GetComponent<Rigidbody>();
+        instance = this;
+        playerRbP = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -22,24 +18,23 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && gameOver == false)
         {
-            playerRb.AddForce(Vector3.up * force, ForceMode.VelocityChange);
+            playerRbP.AddForce(Vector3.up * force, ForceMode.VelocityChange);
         }
         KeepPlayerInBound();
     }
-
-    public virtual void KeepPlayerInBound()
+    public override void KeepPlayerInBound()
     {
-        if ( gameOver == false )
+        if (gameOver == false)
         {
             if (transform.position.y > topBound)
             {
                 transform.position = new Vector3(transform.position.x, topBound, transform.position.z);
-                playerRb.AddForce(Vector3.up * -5, ForceMode.Impulse);
+                playerRbP.AddForce(Vector3.up * -5, ForceMode.Impulse);
             }
             if (transform.position.y < bottomBound)
             {
                 transform.position = new Vector3(transform.position.x, bottomBound, transform.position.z);
-                playerRb.AddForce(Vector3.up * 5, ForceMode.Impulse);
+                playerRbP.AddForce(Vector3.up * 5, ForceMode.Impulse);
             }
         }
     }
@@ -47,14 +42,15 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Obstacle"))
         {
-            gameOver = true;
+            PlayerController.Instance.gameOver = true;
         }
     }
     public void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Sensor"))
         {
-            GameManager.instance.points ++;
+            GameManager.instance.points++;
         }
     }
+
 }
