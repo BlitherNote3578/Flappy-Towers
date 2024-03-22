@@ -53,7 +53,6 @@ public class MenuManager : MonoBehaviour
     }
     public void ExitGame()
     {
-        EditorApplication.ExitPlaymode();
         Application.Quit();
     }
     public void ChangeSkin()
